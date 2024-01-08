@@ -1,0 +1,35 @@
+{
+  "name": "electron-progressbar-customhtml",
+  "version": "0.0.1",
+  "description": "electron-progressbar extends",
+  "main": "main.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oinochoe/electron-progressbar-customhtml.git"
+  },
+  "keywords": [
+    "electron",
+    "progress",
+    "progressbar",
+    "loading",
+    "processing",
+    "electron-progressbar",
+    "electron-progressbar-custom",
+    "electron-progressbar-customhtml"
+  ],
+  "author": {
+    "name": "yeongmin kim",
+    "email": "copstyle86@gmail.com",
+    "url": "https://oinochoe.github.io/portfolio/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oinochoe/electron-progressbar-customhtml/issues",
+    "email": "copstyle86@gmail.com"
+  },
+  "homepage": "https://github.com/oinochoe/electron-progressbar-customhtml#readme",
+  "dependencies": {
+    "electron-progressbar": "^2.1.0"
+  }
+}
