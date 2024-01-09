@@ -1,5 +1,5 @@
 {
-  "name": "electron-progressbar-customhtml",
+  "name": "@oinochoe/electron-progressbar-customhtml",
   "version": "1.0.0",
   "description": "electron-progressbar extends",
   "main": "main.js",
@@ -22,6 +22,9 @@
     "name": "yeongmin kim",
     "email": "copstyle86@gmail.com",
     "url": "https://oinochoe.github.io/portfolio/"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "license": "MIT",
   "bugs": {
