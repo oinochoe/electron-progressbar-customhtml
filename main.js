@@ -6,9 +6,7 @@ class ProgressBarCustom extends ProgressBar {
     }
     _createWindow() {
         super._createWindow();
-        const langAttribute = this._options.lang
-            ? (lang = '${this._options.lang}')
-            : 'lang="en-us"';
+        const langAttribute = this._options.lang ? `lang="${this._options.lang}"` : '';
         if (this._options.html) {
             this._window.loadURL(
                 'data:text/html;charset=UTF8,' +
