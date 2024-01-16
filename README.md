@@ -1,28 +1,23 @@
 [![NPM downloads][npm-downloads]][npm-url]
 [![NPM total downloads][npm-total-downloads]][npm-url]
 
-<!-- | &nbsp;<br>[![Donate][donate-badge]][donate-url] <br>&nbsp; | Your help is appreciated! [Create a PR][create-pr] or just [buy me a coffee][donate-url] | -->
+| &nbsp;<br>[![Donate][donate-badge]][donate-url] <br>&nbsp; | Your help is appreciated! [Create a PR][create-pr] or just [buy me a coffee][donate-url] |
+|-|-|
 
-<!-- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------- | -->
-
-[npm-url]: https://www.npmjs.com/package/electron-progressbar-customhtml
-[npm-downloads]: https://img.shields.io/npm/dm/electron-progressbar-customhtml.svg
-[npm-total-downloads]: https://img.shields.io/npm/dt/electron-progressbar-customhtml.svg?label=total+downloads
+[npm-url]: https://www.npmjs.com/package/electron-progressbar
+[npm-downloads]: https://img.shields.io/npm/dm/electron-progressbar.svg
+[npm-total-downloads]: https://img.shields.io/npm/dt/electron-progressbar.svg?label=total+downloads
 [donate-badge]: https://img.shields.io/badge/Buy%20me%20a%20coffee-Donate-red.svg
-[donate-url]: https://github.com/sponsors/oinochoe
-[create-pr]: https://github.com/oinochoe/electron-progressbar-customhtml/pulls
+[donate-url]: https://github.com/sponsors/AndersonMamede
+[create-pr]: https://github.com/AndersonMamede/electron-progressbar/pulls
 
-# electron-progressbar-customhtml
-
+electron-progressbar
+================
 > electron-progressbar provides an easy-to-use and highly customizable API, to show and manipulate progress bars on Electron applications.
 
 With electron-progressbar, you can easily customize the appearance of the progress bars, including the visual aspects using CSS, as well as the text and any other visible information. Additionally, the library allows for customization of the Electron BrowserWindow that contains the progress bars.
 
-> electron-progressbar-customhtml will be customize your progressbar.
-
-[![NPM](https://nodei.co/npm/electron-progressbar-customhtml.png?downloads=true&stars=true)](https://www.npmjs.com/package/electron-progressbar-customhtml)
-
----
+[![NPM](https://nodei.co/npm/electron-progressbar.png?downloads=true&stars=true)](https://www.npmjs.com/package/electron-progressbar)
 
 ## Demo
 
@@ -41,14 +36,14 @@ example of the taskbar for an **indeterminate progress bar**:<br>
 example of the taskbar for a **determinate progress bar**:<br>
 ![Taskbar for determinate progress bar](/examples/taskbar-determinate-progress-bar.gif)
 
----
-
+***
 ## Table of Contents
 
 * [Installation](#installation)
 * [Examples](#examples)
   * [Indeterminate progress bar](#indeterminate-progress-bar)
   * [Determinate progress bar](#determinate-progress-bar)
+  * [Custom progress bar](#custom-progress-bar)
   * [More examples](#more-examples)
 * [API](#api)
     * [`Methods`](#methods)
@@ -71,13 +66,12 @@ example of the taskbar for a **determinate progress bar**:<br>
 * [Changelog](#changelog)
 * [License](#license)
 
-
 ## Installation
 
 Install with `npm`:
 
-```bash
-$ npm i electron-progressbar-customhtml
+``` bash
+$ npm i electron-progressbar
 ```
 
 ## Examples
@@ -88,39 +82,38 @@ Example of an **indeterminate** progress bar - this progress bar is useful when 
 
 ![Indeterminate progress bar](/examples/indeterminate-progress-bar.gif)
 
-```js
-const { app } = require('electron');
-const ProgressBar = require('electron-progressbar-customhtml');
+``` js
+const {app} = require('electron');
+const ProgressBar = require('electron-progressbar');
 
-const htmlContent = `<div>CUSTOMIZE HTML</div>`;
-
-app.on('ready', function () {
-    var progressBar = new ProgressBar({
-        text: 'Preparing data...',
-        detail: 'Wait...',
-        html: htmlContent,
+app.on('ready', function() {
+  var progressBar = new ProgressBar({
+    text: 'Preparing data...',
+    detail: 'Wait...'
+  });
+  
+  progressBar
+    .on('completed', function() {
+      console.info(`completed...`);
+      progressBar.detail = 'Task completed. Exiting...';
+    })
+    .on('aborted', function() {
+      console.info(`aborted...`);
     });
-
-    progressBar
-        .on('completed', function () {
-            console.info(`completed...`);
-            progressBar.detail = 'Task completed. Exiting...';
-        })
-        .on('aborted', function () {
-            console.info(`aborted...`);
-        });
-
-    // launch a task...
-    // launchTask();
-
-    // when task is completed, set the progress bar to completed
-    // ps: setTimeout is used here just to simulate an interval between
-    // the start and the end of a task
-    setTimeout(function () {
-        progressBar.setCompleted();
-    }, 3000);
+  
+  // launch a task...
+  // launchTask();
+  
+  // when task is completed, set the progress bar to completed
+  // ps: setTimeout is used here just to simulate an interval between
+  // the start and the end of a task
+  setTimeout(function() {
+    progressBar.setCompleted();
+  }, 3000);
 });
 ```
+
+* * *
 
 ### Determinate progress bar
 
@@ -128,43 +121,231 @@ Example of a **determinate** progress bar - this progress bar is useful when you
 
 ![Determinate progress bar](/examples/determinate-progress-bar.gif)
 
-```js
-const { app } = require('electron');
-const ProgressBar = require('electron-progressbar-customhtml');
+``` js
+const {app} = require('electron');
+const ProgressBar = require('electron-progressbar');
 
-app.on('ready', function () {
-    var progressBar = new ProgressBar({
-        indeterminate: false,
-        text: 'Preparing data...',
-        detail: 'Wait...',
+app.on('ready', function() {
+  var progressBar = new ProgressBar({
+    indeterminate: false,
+    text: 'Preparing data...',
+    detail: 'Wait...'
+  });
+  
+  progressBar
+    .on('completed', function() {
+      console.info(`completed...`);
+      progressBar.detail = 'Task completed. Exiting...';
+    })
+    .on('aborted', function(value) {
+      console.info(`aborted... ${value}`);
+    })
+    .on('progress', function(value) {
+      progressBar.detail = `Value ${value} out of ${progressBar.getOptions().maxValue}...`;
     });
-
-    progressBar
-        .on('completed', function () {
-            console.info(`completed...`);
-            progressBar.detail = 'Task completed. Exiting...';
-        })
-        .on('aborted', function (value) {
-            console.info(`aborted... ${value}`);
-        })
-        .on('progress', function (value) {
-            progressBar.detail = `Value ${value} out of ${progressBar.getOptions().maxValue}...`;
-        });
-
-    // launch a task and increase the value of the progress bar for each step completed of a big task;
-    // the progress bar is set to completed when it reaches its maxValue (default maxValue: 100);
-    // ps: setInterval is used here just to simulate the progress of a task
-    setInterval(function () {
-        if (!progressBar.isCompleted()) {
-            progressBar.value += 1;
-        }
-    }, 20);
+  
+  // launch a task and increase the value of the progress bar for each step completed of a big task;
+  // the progress bar is set to completed when it reaches its maxValue (default maxValue: 100);
+  // ps: setInterval is used here just to simulate the progress of a task
+  setInterval(function() {
+    if(!progressBar.isCompleted()){
+      progressBar.value += 1;
+    }
+  }, 20);
 });
 ```
 
-<a name="more-examples"></a>More examples are available in [folder examples](/examples).
+### custom progress bar
 
----
+Example of a **custom** progress bar - This option can be useful when you create your own custom HTML:
+
+<img src="./examples/custom-progress-bar.gif" alt="Custom progress bar" width="320" />
+
+``` js
+const {app} = require('electron');
+const ProgressBar = require('electron-progressbar');
+
+const customHTML = `<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body,
+        table {
+            word-break: break-word;
+            word-wrap: break-word;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0 50px;
+            margin-bottom: 0;
+        }
+
+       (...)
+    </style>
+</head>
+
+<body>
+    <div id="text"></div>
+    <div id="detail"></div>
+    <div id="progressBarContainer"></div>
+    <script>
+
+        var currentValue = {
+            progress: null,
+            text: null,
+            detail: null
+        };
+
+        var elements = {
+            text: document.querySelector("#text"),
+            detail: document.querySelector("#detail"),
+            progressBarContainer: document.querySelector("#progressBarContainer"),
+            progressBar: null // set by createProgressBar()
+        };
+
+        function createProgressBar(settings) {
+
+            if (settings.indeterminate) {
+                var progressBar = document.createElement("div");
+                progressBar.setAttribute("id", "progressBar");
+                progressBar.setAttribute("indeterminate", "t");
+
+                var progressBarValue = document.createElement("div");
+                progressBarValue.setAttribute("id", "progressBarValue");
+                progressBar.appendChild(progressBarValue);
+
+                elements.progressBar = progressBar;
+                elements.progressBarContainer.appendChild(elements.progressBar);
+            } else {
+                var progressBar = document.createElement("progress");
+                progressBar.setAttribute("id", "progressBar");
+                progressBar.max = settings.maxValue;
+
+                elements.progressBar = progressBar;
+                elements.progressBarContainer.appendChild(elements.progressBar);
+            }
+
+            elements.text.innerHTML = currentValue.text;
+            elements.detail.innerHTML = currentValue.detail;
+
+            window.requestAnimationFrame(synchronizeUi);
+        }
+
+        function synchronizeUi() {
+            elements.progressBar.value = currentValue.progress;
+            window.requestAnimationFrame(synchronizeUi);
+        }
+        const settings = {
+            abortOnError: false,
+            debug: false,
+
+            indeterminate: true,
+            initialValue: 0,
+            maxValue: 100,
+            closeOnComplete: true,
+            title: 'Wait...',
+            text: 'Wait...',
+            detail: null,
+            lang: '',
+            customHTML: '',
+
+            style: {
+                text: {},
+                detail: {},
+                bar: {
+                    'width': '100%',
+                    'background': '#BBE0F1'
+                },
+                value: {
+                    'background': '#0976A9'
+                }
+            },
+
+            browserWindow: {
+                parent: null,
+                modal: true,
+                resizable: false,
+                closable: false,
+                minimizable: false,
+                maximizable: false,
+                width: 500,
+                height: 170,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false,
+                },
+            },
+
+            remoteWindow: null
+        };
+
+        ipcRenderer.on("CREATE_PROGRESS_BAR", (event, settings) => {
+            createProgressBar(settings);
+        });
+
+        ipcRenderer.on("SET_PROGRESS", (event, value) => {
+            currentValue.progress = value;
+        });
+
+        ipcRenderer.on("SET_COMPLETED", (event) => {
+            elements.progressBar.classList.add('completed');
+        });
+
+        ipcRenderer.on("SET_TEXT", (event, value) => {
+            currentValue.text = value;
+        });
+
+        ipcRenderer.on("SET_DETAIL", (event, value) => {
+            currentValue.detail = value;
+        });
+    </script>
+</body>
+
+</html>
+
+`
+
+app.on('ready', function() {
+  var progressBar = new ProgressBar({
+    indeterminate: false,
+    customHTML: customHTML
+  });
+
+  progressBar
+    .on('completed', function() {
+      console.info(`completed...`);
+      progressBar.detail = 'Task completed. Exiting...';
+    })
+    .on('aborted', function(value) {
+      console.info(`aborted... ${value}`);
+    })
+    .on('progress', function(value) {
+      progressBar.detail = `Value ${value} out of ${progressBar.getOptions().maxValue}...`;
+    });
+
+
+  // Please Note Indeterminate progress bar example or Determinate progress bar example.
+});
+```
+<a name="more-examples"></a>More examples are available in [folder examples](/examples).
 
 ## API
 
@@ -185,6 +366,7 @@ You can define most of the characteristics of the progress bar using the `option
 | maxValue | <code>number</code> | <code>100</code> | The maximum value for the progress bar. When the progress bar's value reaches this number, the progress bar will be considered complete and the `complete` event will be fired. _This parameter is only applicable for **determinate** progress bars._ |
 | closeOnComplete | <code>boolean</code> | <code>true</code> | Specifies whether the progress bar window should be automatically closed after the progress bar completes. If set to `false`, the progress bar will remain visible until the `close` method is called by your application. |
 | lang | <code>string</code> | _empty_ | Specifies the value for the `lang` attribute of the BrowserWindow's &lt;html&gt; tag. This option has no default value, and the `lang` attribute is only added to &lt;html&gt; when `lang` is explicitly set. This option can also be helpful in case of font rendering issues. |
+| customHTML | <code>string</code> | _empty_ | This is a function that allows you to display a progressbar by customizing HTML. You can insert the entire HTML code starting with the &lt;html&gt; tag in the `customHTML` attribute. Please insert the contents within the &lt;body&gt; tag by referring to the example.
 | title | <code>string</code> | <code>"Wait..."</code> | Specifies the text shown on the progress bar window's title bar. |
 | text | <code>string</code> | <code>"Wait..."</code> | Specifies the text shown inside the progress bar window, next to the progress bar. |
 | detail | <code>string</code> | _empty_ | Specifies the text shown between `text` and the progress bar element. It can be used to display detailed information, such as the current progress of a task. When used for this purpose, it is usually more useful to set this property later so that your application can calculate and display, in real time, the current progress of the task. |
@@ -196,7 +378,7 @@ You can define most of the characteristics of the progress bar using the `option
 | remoteWindow | <code>instance of BrowserWindow</code> | <code>null</code> | Specifies the BrowserWindow where the progress bar will be displayed. If null/undefined/empty or not specified, a new BrowserWindow will be created to show the progress bar. |
 | browserWindow | <code>object</code> |  | Specifies the options for [`Electron's BrowserWindow`](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions). Check the options for `browserWindow` below. P.S.: although only a few options are set by default, you can specify any of [Electron's BrowserWindow options](https://github.com/electron/electron/blob/main/docs/api/browser-window.md#new-browserwindowoptions).
 | browserWindow.parent | <code>instance of BrowserWindow</code> | <code>null</code> | A [BrowserWindow instance](https://github.com/electron/electron/blob/master/docs/api/browser-window.md) to be used as the parent of the progress bar's window. If specified, the progress bar window will always be on top of the given parent window and will block user interaction in parent window until the progress bar is completed (or aborted) and closed. |
-| [options.browserWindow.modal] | <code>boolean</code> | <code>true</code> | Specifies whether the progress bar's window is a modal window. Note that this property only works when the progress bar's window is a child window, i.e., when `browserWindow.parent` is specified. |
+| browserWindow.modal | <code>boolean</code> | <code>true</code> | Specifies whether the progress bar's window is a modal window. Note that this property only works when the progress bar's window is a child window, i.e., when `browserWindow.parent` is specified. |
 | browserWindow.resizable | <code>boolean</code> | <code>false</code> | Specifies whether the user can resize the progress bar's window. |
 | browserWindow.closable | <code>boolean</code> | <code>false</code> | Specifies whether the user can close the progress bar's window. |
 | browserWindow.minimizable | <code>boolean</code> | <code>false</code> | Specifies whether the user can minimize the progress bar's window. |
@@ -206,21 +388,19 @@ You can define most of the characteristics of the progress bar using the `option
 | browserWindow<br>.webPreferences.nodeIntegration | <code>boolean</code> | <code>true</code> | Specifies whether node integration is enabled. |
 | browserWindow<br>.webPreferences.contextIsolation | <code>boolean</code> | <code>false</code> | Specifies whether contextIsolation is enabled. |
 
----
+* * *
 
 ##### `getOptions()` ⇒ <code>object</code>
 
 Return a copy of all the current options.
 
----
+* * *
 
 ##### `on(eventName, listener)` ⇒ <code>reference to this</code>
 
 Add the listener function to the end of the listeners array for the event named `eventName`, and then return a reference to `this` so that next calls can be chained.
 <br>
 P.S.: there are no checks to verify if `listener` has already been added. If you call the same combination of `eventName` and `listener` multiple times, the `listener` will be added and executed multiple times as well.
-
----
 
 
 ### Events
@@ -278,7 +458,7 @@ This property allows getting or setting the progress bar's `text` information th
 
 This property allows getting or setting the progress bar's `detail` information that is shown between `text` and the progress bar element. Useful to display detailed information, such as the current status, in real time, or the current progress of the task.
 
----
+* * *
 
 ## Changelog
 
@@ -286,4 +466,4 @@ This property allows getting or setting the progress bar's `detail` information 
 
 ## License
 
-MIT. See [LICENSE.md](https://github.com/oinochoe/electron-progressbar-customhtml/blob/master/LICENSE) for details.
+MIT. See [LICENSE.md](http://github.com/AndersonMamede/electron-progressbar/blob/master/LICENSE) for details.
